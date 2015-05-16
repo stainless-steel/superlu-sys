@@ -22,6 +22,7 @@ fn main() {
     let output = PathBuf::from(&get!("OUT_DIR"));
 
     run!(cmd!("make").current_dir(&source)
+                     .arg("superlulib")
                      .arg("CFLAGS=-DPRNTlevel=0 -O3 -Wno-logical-op-parentheses")
                      .arg(&format!("SuperLUroot={}", source.display()))
                      .arg(&format!("SUPERLULIB={}", output.join("libsuperlu.a").display())));
