@@ -23,7 +23,8 @@ fn main() {
 
     run!(cmd!("make").current_dir(&source)
                      .arg("superlulib")
-                     .arg("CFLAGS=-fPIC -DPRNTlevel=0 -O3 -Wno-logical-op-parentheses")
+                     .arg("NOOPTS=-fPIC -w")
+                     .arg("CFLAGS=-fPIC -w -DPRNTlevel=0")
                      .arg(&format!("SuperLUroot={}", source.display()))
                      .arg(&format!("SUPERLULIB={}", output.join("libsuperlu.a").display())));
 
