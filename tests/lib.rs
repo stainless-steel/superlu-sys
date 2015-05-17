@@ -42,7 +42,7 @@ fn superlu() {
         }
 
         let mut A: SuperMatrix = uninitialized();
-        dCreate_CompCol_Matrix(&mut A as *mut _, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
 
         let nrhs = 1;
         let rhs = doubleMalloc(m * nrhs);
@@ -55,7 +55,7 @@ fn superlu() {
         }
 
         let mut B: SuperMatrix = uninitialized();
-        dCreate_Dense_Matrix(&mut B as *mut _, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
 
         let perm_r = intMalloc(m);
         assert!(!perm_r.is_null());
@@ -64,26 +64,25 @@ fn superlu() {
         assert!(!perm_c.is_null());
 
         let mut options: superlu_options_t = uninitialized();
-        set_default_options(&mut options as *mut _);
+        set_default_options(&mut options);
         options.ColPerm = NATURAL;
 
         let mut stat: SuperLUStat_t = uninitialized();
-        StatInit(&mut stat as *mut _);
+        StatInit(&mut stat);
 
         let mut L: SuperMatrix = uninitialized();
         let mut U: SuperMatrix = uninitialized();
 
         let mut info = 0;
-        dgssv(&mut options as *mut _, &mut A as *mut _, perm_c, perm_r, &mut L as *mut _,
-              &mut U as *mut _, &mut B as *mut _, &mut stat as *mut _, &mut info as *mut _);
+        dgssv(&mut options, &mut A, perm_c, perm_r, &mut L, &mut U, &mut B, &mut stat, &mut info);
 
         SUPERLU_FREE(rhs as *mut _);
         SUPERLU_FREE(perm_r as *mut _);
         SUPERLU_FREE(perm_c as *mut _);
-        Destroy_CompCol_Matrix(&mut A as *mut _);
-        Destroy_SuperMatrix_Store(&mut B as *mut _);
-        Destroy_SuperNode_Matrix(&mut L as *mut _);
-        Destroy_CompCol_Matrix(&mut U as *mut _);
-        StatFree(&mut stat as *mut _);
+        Destroy_CompCol_Matrix(&mut A);
+        Destroy_SuperMatrix_Store(&mut B);
+        Destroy_SuperNode_Matrix(&mut L);
+        Destroy_CompCol_Matrix(&mut U);
+        StatFree(&mut stat);
     }
 }
