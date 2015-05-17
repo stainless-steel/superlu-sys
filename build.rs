@@ -19,14 +19,14 @@ macro_rules! run(
     );
 );
 
-macro_rules! ok {
+macro_rules! ok(
     ($result:expr) => (
         match $result {
             Ok(ok) => ok,
             Err(error) => panic!("`{}` failed with `{}`", stringify!($result), error),
         }
-    )
-}
+    );
+);
 
 #[allow(unused_must_use)]
 fn main() {
