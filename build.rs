@@ -1,5 +1,3 @@
-#![feature(path_ext)]
-
 use std::{env, fs, io, process};
 use std::path::{Path, PathBuf};
 
@@ -52,10 +50,11 @@ fn main() {
 }
 
 fn copy(source: &Path, destination: &Path, extension: &str) -> io::Result<()> {
-    use std::fs::PathExt;
     for entry in try!(fs::read_dir(source)) {
         let path = try!(entry).path();
-        if path.is_dir() { continue }
+        if fs::metadata(&path).unwrap().is_dir() {
+            continue;
+        }
         match path.extension() {
             Some(name) if name == extension => {
                 match path.file_name() {
