@@ -1,6 +1,6 @@
 [package]
 name = "superlu-sys"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/stainless-steel/superlu-sys"
@@ -8,6 +8,7 @@ homepage = "https://github.com/stainless-steel/superlu-sys"
 documentation = "https://stainless-steel.github.io/superlu-sys"
 description = "The package provides bindings to SuperLU."
 build = "build.rs"
+exclude = ["superlu/SRC/*.o"]
 links = "superlu"
 
 [dependencies]
