@@ -8,7 +8,6 @@ homepage = "https://github.com/stainless-steel/superlu-sys"
 documentation = "https://stainless-steel.github.io/superlu-sys"
 description = "The package provides bindings to SuperLU."
 build = "build.rs"
-exclude = ["superlu/SRC/*.o"]
 links = "superlu"
 
 [dependencies]
