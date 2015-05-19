@@ -28,7 +28,7 @@ macro_rules! ok(
 
 #[allow(unused_must_use)]
 fn main() {
-    let source = PathBuf::from(&get!("CARGO_MANIFEST_DIR")).join("superlu");
+    let source = PathBuf::from(&get!("CARGO_MANIFEST_DIR")).join("source");
     let output = PathBuf::from(&get!("OUT_DIR"));
 
     let include = output.join("include");
