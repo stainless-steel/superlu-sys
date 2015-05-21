@@ -40,7 +40,7 @@ fn main() {
     run!(cmd!("make").current_dir(&source)
                      .arg("superlulib")
                      .arg("NOOPTS=-fPIC -w")
-                     .arg("CFLAGS=-fPIC -w -DPRNTlevel=0")
+                     .arg("CFLAGS=-fPIC -w -DPRNTlevel=0 -O3")
                      .arg(&format!("SuperLUroot={}", source.display()))
                      .arg(&format!("SUPERLULIB={}", lib.join("libsuperlu.a").display())));
 
