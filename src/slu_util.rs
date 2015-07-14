@@ -52,7 +52,10 @@ pub struct SuperLUStat_t {
 extern "C" {
     pub fn Destroy_SuperMatrix_Store(A: *mut SuperMatrix);
     pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
+    pub fn Destroy_CompRow_Matrix(A: *mut SuperMatrix);
     pub fn Destroy_SuperNode_Matrix(A: *mut SuperMatrix);
+    pub fn Destroy_CompCol_Permuted(A: *mut SuperMatrix);
+    pub fn Destroy_Dense_Matrix(A: *mut SuperMatrix);
     pub fn set_default_options(options: *mut superlu_options_t);
     pub fn intMalloc(n: c_int) -> *mut c_int;
     pub fn superlu_free(addr: *mut c_void);
