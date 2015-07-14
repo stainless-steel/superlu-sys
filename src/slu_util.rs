@@ -1,0 +1,71 @@
+use libc::{c_double, c_float, c_int, c_void};
+
+use superlu_enum_consts::*;
+use supermatrix::*;
+
+pub type flops_t = c_float;
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct superlu_options_t {
+    pub Fact: fact_t,
+    pub Equil: yes_no_t,
+    pub ColPerm: colperm_t,
+    pub Trans: trans_t,
+    pub IterRefine: IterRefine_t,
+    pub DiagPivotThresh: c_double,
+    pub SymmetricMode: yes_no_t,
+    pub PivotGrowth: yes_no_t,
+    pub ConditionNumber: yes_no_t,
+    pub RowPerm: rowperm_t,
+    pub ILU_DropRule: c_int,
+    pub ILU_DropTol: c_double,
+    pub ILU_FillFactor: c_double,
+    pub ILU_Norm: norm_t,
+    pub ILU_FillTol: c_double,
+    pub ILU_MILU: milu_t,
+    pub ILU_MILU_Dim: c_double,
+    pub ParSymbFact: yes_no_t,
+    pub ReplaceTinyPivot: yes_no_t,
+    pub SolveInitialized: yes_no_t,
+    pub RefineInitialized: yes_no_t,
+    pub PrintStat: yes_no_t,
+    pub nnzL: c_int,
+    pub nnzU: c_int,
+    pub num_lookaheads: c_int,
+    pub lookahead_etree: yes_no_t,
+    pub SymPattern: yes_no_t,
+}
+
+#[allow(raw_pointer_derive)]
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct SuperLUStat_t {
+    pub panel_histo: *mut c_int,
+    pub utime: *mut c_double,
+    pub ops: *mut flops_t,
+    pub TinyPivots: c_int,
+    pub RefineSteps: c_int,
+    pub expansions: c_int,
+}
+
+extern "C" {
+    pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
+    pub fn Destroy_SuperMatrix_Store(A: *mut SuperMatrix);
+    pub fn Destroy_SuperNode_Matrix(A: *mut SuperMatrix);
+
+    pub fn StatFree(stat: *mut SuperLUStat_t);
+    pub fn StatInit(stat: *mut SuperLUStat_t);
+
+    pub fn intMalloc(n: c_int) -> *mut c_int;
+
+    pub fn set_default_options(options: *mut superlu_options_t);
+
+    pub fn superlu_free(addr: *mut c_void);
+
+    pub fn dgssv(options: *mut superlu_options_t, A: *mut SuperMatrix, perm_c: *mut c_int,
+                 perm_r: *mut c_int, L: *mut SuperMatrix, U: *mut SuperMatrix, B: *mut SuperMatrix,
+                 stat: *mut SuperLUStat_t, info: *mut c_int);
+}
+
+pub static SUPERLU_FREE: unsafe extern fn(*mut c_void) = superlu_free;
