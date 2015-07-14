@@ -14,6 +14,6 @@ The package provides bindings to [SuperLU][1].
 
 [version-img]: https://img.shields.io/crates/v/superlu-sys.svg
 [version-url]: https://crates.io/crates/superlu-sys
-[status-svg]: https://travis-ci.org/stainless-steel/superlu-sys.svg?branch=master
+[status-img]: https://travis-ci.org/stainless-steel/superlu-sys.svg?branch=master
 [status-url]: https://travis-ci.org/stainless-steel/superlu-sys
 [doc]: https://stainless-steel.github.io/superlu-sys
