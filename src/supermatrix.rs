@@ -49,3 +49,13 @@ pub struct SuperMatrix {
     pub ncol: int_t,
     pub Store: *mut c_void,
 }
+
+#[allow(raw_pointer_derive)]
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct NCformat {
+    pub nnz: int_t,
+    pub nzval: *mut c_void,
+    pub rowind: *mut int_t,
+    pub colptr: *mut int_t,
+}
