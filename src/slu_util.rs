@@ -50,22 +50,14 @@ pub struct SuperLUStat_t {
 }
 
 extern "C" {
-    pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
     pub fn Destroy_SuperMatrix_Store(A: *mut SuperMatrix);
+    pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
     pub fn Destroy_SuperNode_Matrix(A: *mut SuperMatrix);
-
-    pub fn StatFree(stat: *mut SuperLUStat_t);
-    pub fn StatInit(stat: *mut SuperLUStat_t);
-
-    pub fn intMalloc(n: c_int) -> *mut c_int;
-
     pub fn set_default_options(options: *mut superlu_options_t);
-
+    pub fn intMalloc(n: c_int) -> *mut c_int;
     pub fn superlu_free(addr: *mut c_void);
-
-    pub fn dgssv(options: *mut superlu_options_t, A: *mut SuperMatrix, perm_c: *mut c_int,
-                 perm_r: *mut c_int, L: *mut SuperMatrix, U: *mut SuperMatrix, B: *mut SuperMatrix,
-                 stat: *mut SuperLUStat_t, info: *mut c_int);
+    pub fn StatInit(stat: *mut SuperLUStat_t);
+    pub fn StatFree(stat: *mut SuperLUStat_t);
 }
 
 pub static SUPERLU_FREE: unsafe extern fn(*mut c_void) = superlu_free;
