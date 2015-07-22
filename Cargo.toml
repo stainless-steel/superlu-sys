@@ -11,5 +11,5 @@ build = "build.rs"
 links = "superlu"
 
 [dependencies]
-libc = "*"
 blas-sys = "*"
+libc = "*"
