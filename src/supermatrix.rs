@@ -38,7 +38,6 @@ pub enum Mtype_t {
     SLU_HEU,
 }
 
-#[allow(raw_pointer_derive)]
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct SuperMatrix {
@@ -50,7 +49,6 @@ pub struct SuperMatrix {
     pub Store: *mut c_void,
 }
 
-#[allow(raw_pointer_derive)]
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct NCformat {

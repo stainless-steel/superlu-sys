@@ -37,7 +37,6 @@ pub struct superlu_options_t {
     pub SymPattern: yes_no_t,
 }
 
-#[allow(raw_pointer_derive)]
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct SuperLUStat_t {

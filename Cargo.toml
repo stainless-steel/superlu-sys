@@ -1,6 +1,6 @@
 [package]
 name = "superlu-sys"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/stainless-steel/superlu-sys"
@@ -11,5 +11,5 @@ build = "build.rs"
 links = "superlu"
 
 [dependencies]
-blas-sys = "0.2"
+blas-sys = "0.5"
 libc = "0.2"
