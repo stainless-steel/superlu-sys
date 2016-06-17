@@ -37,10 +37,11 @@ fn main() {
 
     let lib = output.join("lib");
     fs::create_dir(&lib);
-    run!(cmd!("make").current_dir(&source)
-                     .arg("superlulib")
-                     .arg("NOOPTS=-fPIC -w")
-                     .arg("CFLAGS=-fPIC -w -DPRNTlevel=0 -O3")
+    run!(cmd!("make").current_dir(&source.join("SRC"))
+                     .arg("NOOPTS=-O0 -fPIC -w")
+                     .arg("CFLAGS=-O3 -DNDEBUG -DPRNTlevel=0 -fPIC -w")
+                     .arg("DZAUX=")
+                     .arg("SCAUX=")
                      .arg(&format!("SuperLUroot={}", source.display()))
                      .arg(&format!("SUPERLULIB={}", lib.join("libsuperlu.a").display())));
 
