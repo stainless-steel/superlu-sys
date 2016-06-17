@@ -4,16 +4,16 @@ The package provides bindings to [SuperLU][1].
 
 ## [Documentation][doc]
 
-## Contributing
+## Contribution
 
-1. Fork the project.
-2. Implement your idea.
-3. Open a pull request.
+Your contribution is highly appreciated. Do not hesitate to open an issue or a
+pull request. Note that any contribution submitted for inclusion in the project
+will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 
 [1]: http://crd-legacy.lbl.gov/~xiaoye/SuperLU
 
-[version-img]: https://img.shields.io/crates/v/superlu-sys.svg
-[version-url]: https://crates.io/crates/superlu-sys
+[doc]: https://stainless-steel.github.io/superlu-sys
 [status-img]: https://travis-ci.org/stainless-steel/superlu-sys.svg?branch=master
 [status-url]: https://travis-ci.org/stainless-steel/superlu-sys
-[doc]: https://stainless-steel.github.io/superlu-sys
+[version-img]: https://img.shields.io/crates/v/superlu-sys.svg
+[version-url]: https://crates.io/crates/superlu-sys

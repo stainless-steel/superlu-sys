@@ -1,12 +1,12 @@
 [package]
 name = "superlu-sys"
-version = "0.2.5"
+version = "0.3.0"
+license = "Apache-2.0/MIT"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
-license = "MIT"
-repository = "https://github.com/stainless-steel/superlu-sys"
-homepage = "https://github.com/stainless-steel/superlu-sys"
-documentation = "https://stainless-steel.github.io/superlu-sys"
 description = "The package provides bindings to SuperLU."
+documentation = "https://stainless-steel.github.io/superlu-sys"
+homepage = "https://github.com/stainless-steel/superlu-sys"
+repository = "https://github.com/stainless-steel/superlu-sys"
 build = "build.rs"
 links = "superlu"
 
