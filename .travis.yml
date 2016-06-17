@@ -1,5 +1,6 @@
 language: rust
 sudo: false
+
 rust:
   - stable
   - beta
@@ -11,12 +12,11 @@ addons:
       - gfortran
 
 after_success:
-  - curl https://stainless-steel.github.io/travis/after_success.sh | bash
+  - curl https://stainless-steel.github.io/travis/documentation.sh | bash
 
 env:
   global:
-    - RUSTDOC_VERSION=nightly
-    - secure: n8xBAiaI23myxhJWLfSTvScCB3ccUhwPOM4FhpOT/b5vtp1UKUXbp69I9uT5J90VmHuJ/vnEmW73JjgnDLgNEvy8tw4zDVFkEDDANahQvaEYUEC5MwLDU/C7JBpuIWE8pShba4NQQ1ieNwVoJVkIsIJ5X95QICDwrgOhOPbq+gpRqdSxzPa8i5rsQ2YQpefawd72UHymRXqJyhTg7ZnipQaT2UBlPjQ8zA49hc/eB9jDnGqMHmgdUMvoKVkakRaKvyysBDDfWuytdh1gz6lxfEtFKqWBDgwC0HATzTbvZVS1CiNtE3mZ/zO4TRTlsVwHsCC6c1TDckBAjM62nOqorIVxO+MnVbWwWLrC0vC8BraaQi7kFn/6cisFhs+qb1OSo9zN9maNUtH/fLT2VTgIruQdAMlKW7pOOvR/DUveyxddr1jakYPUudiJ2RKP6l46GNtlDAhfv11IGDPzVAAj+0uH4yz1WKLVIPae9rXo3zbX8gCVKqLdcyzt52woP8AaLbiBRtB2OmBjhQRMBZk82yEhqAN0AM/Jzj9/QSnlUqpQZ9T9Zhvviqj76YYQ8iFj7J/ervYBMsxvCpuDt7/JKH20pN0n/If63NLUf2Xo0v8D4KPZEuslT0l00k64qw5V0q2QPKYv/aNzknOHXwGclxDT03OXLskv4Gjc4VNfwAU=
+    - secure: JrfS2u/ITpbBfBAVHOB9Zmu3nT9qXRYN9YUsN1e3GBgvNiMIeHgNWNQWaU8RTO9yZQYQwlv6bE2JTr0sSE6rThhusfLQFZBJcN6aQGQDdSbVvRxyP5M/Mpap/HhvTpo0aXXh0t9iO+o4VUMnnmmq6sVxrx5P0VrUD7HanP/EJ5Wffx2Ul6kZ1tlIV3IW/nAuP7UaW8a6bFTU1Q5QjTxnB00jS+Si3w91AQJCfupzMCcsCN8OF3fnpSRLq2dcG3BHTXvIUNsmNgiq8+p8SSIM5RCCiO+VYpOTWMQ3mdVciVVKgnCeY4dCvFQYGdTHFPmclzwHtBM2Am+z9AyUOfRjhowcrj0T/q5VIEaH8CWlqF4dpWGwmfR60DsbbltqqpPk7fjJG3GCcPp10qSjvJ6ZZEoySVBr0meNZ1y4LPIJtLPgvhNkSbG/tiruZoMwQhwX6L8YvFYQe6RtU7dJ8ty1IQtUFwqlL/7TvLL4K93yG47jbx/4VYUNiLY9yGVD4kVzkELf9NpjvjTEbDVYeRhfhKsEgt4VB1mhKztNARgv4YjWYlYTrdDZVQkzWhjaNu0W4jMm1FjJmPi65HmC7XB/tdrfQwlcuWXFkkgVCsBE4eCYEcsme/EEvrSIFMvq62YKpzfwpGAOHnMXZbHl+RT/FQAC85hYMrQQJxIy28ZpzzI=
 
 notifications:
   email: false
