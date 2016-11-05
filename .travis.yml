@@ -7,13 +7,6 @@ rust:
   - beta
   - nightly
 
-after_success:
-  - curl https://stainless-steel.github.io/travis/documentation.sh | bash
-
-env:
-  global:
-    - secure: JrfS2u/ITpbBfBAVHOB9Zmu3nT9qXRYN9YUsN1e3GBgvNiMIeHgNWNQWaU8RTO9yZQYQwlv6bE2JTr0sSE6rThhusfLQFZBJcN6aQGQDdSbVvRxyP5M/Mpap/HhvTpo0aXXh0t9iO+o4VUMnnmmq6sVxrx5P0VrUD7HanP/EJ5Wffx2Ul6kZ1tlIV3IW/nAuP7UaW8a6bFTU1Q5QjTxnB00jS+Si3w91AQJCfupzMCcsCN8OF3fnpSRLq2dcG3BHTXvIUNsmNgiq8+p8SSIM5RCCiO+VYpOTWMQ3mdVciVVKgnCeY4dCvFQYGdTHFPmclzwHtBM2Am+z9AyUOfRjhowcrj0T/q5VIEaH8CWlqF4dpWGwmfR60DsbbltqqpPk7fjJG3GCcPp10qSjvJ6ZZEoySVBr0meNZ1y4LPIJtLPgvhNkSbG/tiruZoMwQhwX6L8YvFYQe6RtU7dJ8ty1IQtUFwqlL/7TvLL4K93yG47jbx/4VYUNiLY9yGVD4kVzkELf9NpjvjTEbDVYeRhfhKsEgt4VB1mhKztNARgv4YjWYlYTrdDZVQkzWhjaNu0W4jMm1FjJmPi65HmC7XB/tdrfQwlcuWXFkkgVCsBE4eCYEcsme/EEvrSIFMvq62YKpzfwpGAOHnMXZbHl+RT/FQAC85hYMrQQJxIy28ZpzzI=
-
 addons:
   apt:
     packages:
