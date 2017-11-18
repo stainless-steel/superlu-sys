@@ -7,6 +7,9 @@ description = "The package provides bindings to SuperLU."
 documentation = "https://docs.rs/superlu-sys"
 homepage = "https://github.com/stainless-steel/superlu-sys"
 repository = "https://github.com/stainless-steel/superlu-sys"
+readme = "README.md"
+categories = ["external-ffi-bindings", "science"]
+keywords = ["linear-algebra"]
 build = "build.rs"
 links = "superlu"
 

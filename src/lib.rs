@@ -1,6 +1,6 @@
-//! Bindings to [SuperLU][1].
+//! Bindings to [SuperLU].
 //!
-//! [1]: http://crd-legacy.lbl.gov/~xiaoye/SuperLU
+//! [superlu]: http://crd-legacy.lbl.gov/~xiaoye/SuperLU
 
 #![allow(bad_style)]
 
