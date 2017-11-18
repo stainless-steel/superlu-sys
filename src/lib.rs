@@ -4,8 +4,8 @@
 
 #![allow(bad_style)]
 
-extern crate blas_sys;
 extern crate libc;
+extern crate openblas_src;
 
 mod dsp_blas2;
 mod dsp_blas3;

@@ -14,5 +14,5 @@ build = "build.rs"
 links = "superlu"
 
 [dependencies]
-blas-sys = "0.6"
 libc = "0.2"
+openblas-src = "0.5"
