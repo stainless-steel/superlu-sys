@@ -62,4 +62,4 @@ extern "C" {
     pub fn StatFree(stat: *mut SuperLUStat_t);
 }
 
-pub static SUPERLU_FREE: unsafe extern fn(*mut c_void) = superlu_free;
+pub static SUPERLU_FREE: unsafe extern "C" fn(*mut c_void) = superlu_free;
