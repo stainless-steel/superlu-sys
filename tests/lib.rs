@@ -4,7 +4,7 @@ extern crate superlu_sys as raw;
 #[allow(non_snake_case)]
 #[test]
 fn superlu() {
-    use std::mem::uninitialized;
+    use std::mem::MaybeUninit;
     use std::slice::from_raw_parts_mut;
 
     use raw::*;
@@ -65,8 +65,9 @@ fn superlu() {
             xa[5] = 12;
         }
 
-        let mut A: SuperMatrix = uninitialized();
-        dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        let mut A = MaybeUninit::<SuperMatrix>::uninit();
+        dCreate_CompCol_Matrix(A.as_mut_ptr(), m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        let mut A = A.assume_init();
 
         let nrhs = 1;
         let rhs = doubleMalloc(m * nrhs);
@@ -78,8 +79,9 @@ fn superlu() {
             }
         }
 
-        let mut B: SuperMatrix = uninitialized();
-        dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        let mut B = MaybeUninit::<SuperMatrix>::uninit();
+        dCreate_Dense_Matrix(B.as_mut_ptr(), m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        let mut B = B.assume_init();
 
         let perm_r = intMalloc(m);
         assert!(!perm_r.is_null());
@@ -87,15 +89,17 @@ fn superlu() {
         let perm_c = intMalloc(n);
         assert!(!perm_c.is_null());
 
-        let mut options: superlu_options_t = uninitialized();
-        set_default_options(&mut options);
+        let mut options = MaybeUninit::<superlu_options_t>::uninit();
+        set_default_options(options.as_mut_ptr());
+        let mut options = options.assume_init();
         options.ColPerm = NATURAL;
 
-        let mut stat: SuperLUStat_t = uninitialized();
-        StatInit(&mut stat);
+        let mut stat = MaybeUninit::<SuperLUStat_t>::uninit();
+        StatInit(stat.as_mut_ptr());
+        let mut stat = stat.assume_init();
 
-        let mut L: SuperMatrix = uninitialized();
-        let mut U: SuperMatrix = uninitialized();
+        let mut L = MaybeUninit::<SuperMatrix>::uninit();
+        let mut U = MaybeUninit::<SuperMatrix>::uninit();
 
         let mut info = 0;
         dgssv(
@@ -103,12 +107,14 @@ fn superlu() {
             &mut A,
             perm_c,
             perm_r,
-            &mut L,
-            &mut U,
+            L.as_mut_ptr(),
+            U.as_mut_ptr(),
             &mut B,
             &mut stat,
             &mut info,
         );
+        let mut L = L.assume_init();
+        let mut U = U.assume_init();
 
         SUPERLU_FREE(rhs as *mut _);
         SUPERLU_FREE(perm_r as *mut _);

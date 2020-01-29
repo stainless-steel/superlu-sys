@@ -5,7 +5,7 @@ extern crate libc;
 #[allow(non_snake_case)]
 #[test]
 fn test_dgstrf_dgstrs() {
-    use std::mem::uninitialized;
+    use std::mem::MaybeUninit;
     use std::slice::from_raw_parts_mut;
     use libc::c_int;
 
@@ -69,8 +69,9 @@ fn test_dgstrf_dgstrs() {
             xa[5] = 12;
         }
 
-        let mut A: SuperMatrix = uninitialized();
-        dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        let mut A = MaybeUninit::<SuperMatrix>::uninit();
+        dCreate_CompCol_Matrix(A.as_mut_ptr(), m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        let mut A = A.assume_init();
 
         let nrhs = 1;
         let rhs = doubleMalloc(m * nrhs);
@@ -82,8 +83,9 @@ fn test_dgstrf_dgstrs() {
             }
         }
 
-        let mut B: SuperMatrix = uninitialized();
-        dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        let mut B = MaybeUninit::<SuperMatrix>::uninit();
+        dCreate_Dense_Matrix(B.as_mut_ptr(), m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        let mut B = B.assume_init();
 
         let perm_r = intMalloc(m);
         assert!(!perm_r.is_null());
@@ -91,15 +93,17 @@ fn test_dgstrf_dgstrs() {
         let perm_c = intMalloc(n);
         assert!(!perm_c.is_null());
 
-        let mut options: superlu_options_t = uninitialized();
-        set_default_options(&mut options);
+        let mut options = MaybeUninit::<superlu_options_t>::uninit();
+        set_default_options(options.as_mut_ptr());
+        let mut options = options.assume_init();
         options.ColPerm = MMD_ATA;
 
-        let mut stat: SuperLUStat_t = uninitialized();
-        StatInit(&mut stat);
+        let mut stat = MaybeUninit::<SuperLUStat_t>::uninit();
+        StatInit(stat.as_mut_ptr());
+        let mut stat = stat.assume_init();
 
-        let mut L: SuperMatrix = uninitialized();
-        let mut U: SuperMatrix = uninitialized();
+        let mut L = MaybeUninit::<SuperMatrix>::uninit();
+        let mut U = MaybeUninit::<SuperMatrix>::uninit();
 
         let mut info = 0;
         poor_mans_dgssv(
@@ -107,12 +111,14 @@ fn test_dgstrf_dgstrs() {
             &mut A,
             perm_c,
             perm_r,
-            &mut L,
-            &mut U,
+            L.as_mut_ptr(),
+            U.as_mut_ptr(),
             &mut B,
             &mut stat,
             &mut info,
         );
+        let mut L = L.assume_init();
+        let mut U = U.assume_init();
 
         SUPERLU_FREE(rhs as *mut _);
         SUPERLU_FREE(perm_r as *mut _);
@@ -133,8 +139,8 @@ fn test_dgstrf_dgstrs() {
         A: &mut SuperMatrix,
         perm_c: *mut c_int,
         perm_r: *mut c_int,
-        L: &mut SuperMatrix,
-        U: &mut SuperMatrix,
+        L: *mut SuperMatrix,
+        U: *mut SuperMatrix,
         B: &mut SuperMatrix,
         stat: &mut SuperLUStat_t,
         info: &mut c_int,
@@ -160,17 +166,17 @@ fn test_dgstrf_dgstrs() {
 
         let etree = intMalloc(A.ncol);
 
-        let mut AC: SuperMatrix = uninitialized();
-        sp_preorder(options, A, perm_c, etree, &mut AC);
+        let mut AC = MaybeUninit::<SuperMatrix>::uninit();
+        sp_preorder(options, A, perm_c, etree, AC.as_mut_ptr());
 
-        let mut Glu: GlobalLU_t = uninitialized();
+        let mut Glu = MaybeUninit::<GlobalLU_t>::uninit();
         let panel_size = sp_ienv(1);
         let relax = sp_ienv(2);
         let work = std::ptr::null_mut();
         let lwork = 0;
         dgstrf(
             options,
-            &mut AC,
+            AC.as_mut_ptr(),
             relax,
             panel_size,
             etree,
@@ -180,10 +186,12 @@ fn test_dgstrf_dgstrs() {
             perm_r,
             L,
             U,
-            &mut Glu,
+            Glu.as_mut_ptr(),
             stat,
             info,
         );
+        let mut AC = AC.assume_init();
+        let _ = Glu.assume_init();
 
         if *info == 0 {
             dgstrs(
