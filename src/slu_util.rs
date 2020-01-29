@@ -39,6 +39,23 @@ pub struct superlu_options_t {
 
 #[derive(Clone, Copy)]
 #[repr(C)]
+pub struct ExpHeader {
+    pub size: c_int,
+    pub mem: *mut c_void,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct LU_stack_t {
+    pub size: c_int,
+    pub used: c_int,
+    pub top1: c_int,
+    pub top2: c_int,
+    pub array: *mut c_void,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
 pub struct SuperLUStat_t {
     pub panel_histo: *mut c_int,
     pub utime: *mut c_double,
@@ -48,6 +65,28 @@ pub struct SuperLUStat_t {
     pub expansions: c_int,
 }
 
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct GlobalLU_t {
+    pub xsup: *mut c_int,
+    pub supno: *mut c_int,
+    pub lsub: *mut c_int,
+    pub xlsub: *mut c_int,
+    pub lusup: *mut c_void,
+    pub xlusup: *mut c_int,
+    pub ucol: *mut c_void,
+    pub usub: *mut c_int,
+    pub xusub: *mut c_int,
+    pub nzlmax: c_int,
+    pub nzumax: c_int,
+    pub nzlumax: c_int,
+    pub n: c_int,
+    pub MemModel: LU_space_t,
+    pub num_expansions: c_int,
+    pub expanders: *mut ExpHeader,
+    pub stack: LU_stack_t,
+}
+
 extern "C" {
     pub fn Destroy_SuperMatrix_Store(A: *mut SuperMatrix);
     pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
@@ -55,8 +94,17 @@ extern "C" {
     pub fn Destroy_SuperNode_Matrix(A: *mut SuperMatrix);
     pub fn Destroy_CompCol_Permuted(A: *mut SuperMatrix);
     pub fn Destroy_Dense_Matrix(A: *mut SuperMatrix);
+    pub fn get_perm_c(ispec: c_int, A: *mut SuperMatrix, perm_c: *mut c_int);
     pub fn set_default_options(options: *mut superlu_options_t);
+    pub fn sp_preorder(
+        options: *mut superlu_options_t,
+        A: *mut SuperMatrix,
+        perm_c: *mut c_int,
+        etree: *mut c_int,
+        AC: *mut SuperMatrix,
+    );
     pub fn intMalloc(n: c_int) -> *mut c_int;
+    pub fn sp_ienv(ispec: c_int) -> c_int;
     pub fn superlu_free(addr: *mut c_void);
     pub fn StatInit(stat: *mut SuperLUStat_t);
     pub fn StatFree(stat: *mut SuperLUStat_t);

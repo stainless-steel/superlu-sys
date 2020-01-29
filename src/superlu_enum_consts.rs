@@ -54,6 +54,13 @@ pub enum IterRefine_t {
 
 #[derive(Clone, Copy)]
 #[repr(C)]
+pub enum LU_space_t {
+    SYSTEM,
+    USER,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
 pub enum norm_t {
     ONE_NORM,
     TWO_NORM,
