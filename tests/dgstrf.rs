@@ -1,21 +1,21 @@
-extern crate superlu_sys as raw;
 extern crate libc;
+extern crate superlu_sys as raw;
 
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
 #[allow(non_snake_case)]
 #[test]
 fn test_dgstrf_dgstrs() {
+    use libc::c_int;
     use std::mem::MaybeUninit;
     use std::slice::from_raw_parts_mut;
-    use libc::c_int;
 
-    use raw::*;
+    use raw::colperm_t::*;
+    use raw::fact_t::*;
+    use raw::trans_t::*;
     use raw::Dtype_t::*;
     use raw::Mtype_t::*;
     use raw::Stype_t::*;
-    use raw::colperm_t::*;
-    use raw::trans_t::*;
-    use raw::fact_t::*;
+    use raw::*;
 
     unsafe {
         let (m, n, nnz) = (5, 5, 12);
@@ -70,7 +70,18 @@ fn test_dgstrf_dgstrs() {
         }
 
         let mut A = MaybeUninit::<SuperMatrix>::uninit();
-        dCreate_CompCol_Matrix(A.as_mut_ptr(), m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        dCreate_CompCol_Matrix(
+            A.as_mut_ptr(),
+            m,
+            n,
+            nnz,
+            a,
+            asub,
+            xa,
+            SLU_NC,
+            SLU_D,
+            SLU_GE,
+        );
         let mut A = A.assume_init();
 
         let nrhs = 1;
@@ -194,16 +205,7 @@ fn test_dgstrf_dgstrs() {
         let _ = Glu.assume_init();
 
         if *info == 0 {
-            dgstrs(
-                NOTRANS,
-                L,
-                U,
-                perm_c,
-                perm_r,
-                B,
-                stat,
-                info,
-            );
+            dgstrs(NOTRANS, L, U, perm_c, perm_r, B, stat, info);
         }
 
         SUPERLU_FREE(etree as *mut _);

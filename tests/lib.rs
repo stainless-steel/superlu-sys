@@ -7,11 +7,11 @@ fn superlu() {
     use std::mem::MaybeUninit;
     use std::slice::from_raw_parts_mut;
 
-    use raw::*;
+    use raw::colperm_t::*;
     use raw::Dtype_t::*;
     use raw::Mtype_t::*;
     use raw::Stype_t::*;
-    use raw::colperm_t::*;
+    use raw::*;
 
     unsafe {
         let (m, n, nnz) = (5, 5, 12);
@@ -66,7 +66,18 @@ fn superlu() {
         }
 
         let mut A = MaybeUninit::<SuperMatrix>::uninit();
-        dCreate_CompCol_Matrix(A.as_mut_ptr(), m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+        dCreate_CompCol_Matrix(
+            A.as_mut_ptr(),
+            m,
+            n,
+            nnz,
+            a,
+            asub,
+            xa,
+            SLU_NC,
+            SLU_D,
+            SLU_GE,
+        );
         let mut A = A.assume_init();
 
         let nrhs = 1;

@@ -1,8 +1,8 @@
 use libc::{c_double, c_int, c_void};
 
 use slu_util::*;
-use supermatrix::*;
 use superlu_enum_consts::*;
+use supermatrix::*;
 
 extern "C" {
     pub fn dgssv(
@@ -58,7 +58,7 @@ extern "C" {
         info: *mut c_int,
     );
 
-    pub fn dgstrs (
+    pub fn dgstrs(
         trans: trans_t,
         L: *mut SuperMatrix,
         U: *mut SuperMatrix,
