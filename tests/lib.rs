@@ -1,15 +1,17 @@
 extern crate superlu_sys as raw;
 
 use std::mem::MaybeUninit;
+use std::slice::from_raw_parts_mut;
+use raw::{dCreate_Dense_Matrix, doubleMalloc, SuperMatrix};
+use raw::Dtype_t::SLU_D;
+use raw::Mtype_t::SLU_GE;
+use raw::Stype_t::SLU_DN;
+use raw::*;
 
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
 #[allow(non_snake_case)]
 #[test]
 fn superlu() {
-    use std::mem::MaybeUninit;
-    use std::slice::from_raw_parts_mut;
-
-    use raw::*;
     use raw::Dtype_t::*;
     use raw::Mtype_t::*;
     use raw::Stype_t::*;
@@ -121,5 +123,28 @@ fn superlu() {
         Destroy_SuperNode_Matrix(&mut L);
         Destroy_CompCol_Matrix(&mut U);
         StatFree(&mut stat);
+    }
+}
+
+#[test]
+fn test_read_write_super_matrix_f64 () {
+    let m = 3;
+    let n = 2;
+    let v = unsafe {
+        let rhs = doubleMalloc(m * n);
+        assert!(!rhs.is_null());
+        {
+            let rhs = from_raw_parts_mut(rhs, (m * n) as usize);
+            for i in 0..((m * n) as usize) {
+                rhs[i] = i as f64;
+            }
+        }
+
+        let mut a: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        dCreate_Dense_Matrix(&mut a, m, n, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        a.data_as_vec().unwrap()
+    };
+    for i in 0..v.len() as i32 {
+        assert_eq!(v[i as usize], i.into());
     }
 }
