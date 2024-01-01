@@ -1,10 +1,12 @@
 extern crate superlu_sys as raw;
 
+use std::mem::MaybeUninit;
+
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
 #[allow(non_snake_case)]
 #[test]
 fn superlu() {
-    use std::mem::uninitialized;
+    use std::mem::MaybeUninit;
     use std::slice::from_raw_parts_mut;
 
     use raw::*;
@@ -65,7 +67,8 @@ fn superlu() {
             xa[5] = 12;
         }
 
-        let mut A: SuperMatrix = uninitialized();
+        let mut A: SuperMatrix = unsafe { MaybeUninit::zeroed().assume_init() };
+
         dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
 
         let nrhs = 1;
@@ -78,7 +81,7 @@ fn superlu() {
             }
         }
 
-        let mut B: SuperMatrix = uninitialized();
+        let mut B: SuperMatrix = unsafe { MaybeUninit::zeroed().assume_init() };
         dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
 
         let perm_r = intMalloc(m);
@@ -87,15 +90,15 @@ fn superlu() {
         let perm_c = intMalloc(n);
         assert!(!perm_c.is_null());
 
-        let mut options: superlu_options_t = uninitialized();
+        let mut options: superlu_options_t = unsafe { MaybeUninit::zeroed().assume_init() };
         set_default_options(&mut options);
         options.ColPerm = NATURAL;
 
-        let mut stat: SuperLUStat_t = uninitialized();
+        let mut stat: SuperLUStat_t = unsafe { MaybeUninit::zeroed().assume_init() };
         StatInit(&mut stat);
 
-        let mut L: SuperMatrix = uninitialized();
-        let mut U: SuperMatrix = uninitialized();
+        let mut L: SuperMatrix = unsafe { MaybeUninit::zeroed().assume_init() };
+        let mut U: SuperMatrix = unsafe { MaybeUninit::zeroed().assume_init() };
 
         let mut info = 0;
         dgssv(
