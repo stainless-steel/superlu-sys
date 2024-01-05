@@ -2,11 +2,10 @@
 name = "superlu-sys"
 version = "0.3.2"
 license = "Apache-2.0/MIT"
-authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
-description = "The package provides bindings to SuperLU."
+authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>", "Henrik Stromberg <henrik@askdrq.com>"]
+description = "The package provides bindings to SuoerLU. Fork of superlu-sys by Ivan Ukov."
 documentation = "https://docs.rs/superlu-sys"
-homepage = "https://github.com/stainless-steel/superlu-sys"
-repository = "https://github.com/stainless-steel/superlu-sys"
+repository = "https://github.com/HenrikJStromberg/superlu-sys"
 readme = "README.md"
 categories = ["external-ffi-bindings", "science"]
 keywords = ["linear-algebra"]
