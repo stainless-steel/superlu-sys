@@ -14,4 +14,4 @@ links = "superlu"
 
 [dependencies]
 libc = "0.2"
-openblas-src = "0.10.8"
+openblas-src = { version = "0.10.8", features = ["cache"] }
