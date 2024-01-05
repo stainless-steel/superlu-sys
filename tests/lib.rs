@@ -1,13 +1,17 @@
 extern crate superlu_sys as raw;
 
+use std::mem::MaybeUninit;
+use std::slice::from_raw_parts_mut;
+use raw::{dCreate_Dense_Matrix, doubleMalloc, SuperMatrix};
+use raw::Dtype_t::SLU_D;
+use raw::Mtype_t::SLU_GE;
+use raw::Stype_t::SLU_DN;
+use raw::*;
+
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
 #[allow(non_snake_case)]
 #[test]
-fn superlu() {
-    use std::mem::uninitialized;
-    use std::slice::from_raw_parts_mut;
-
-    use raw::*;
+fn test_valid() {
     use raw::Dtype_t::*;
     use raw::Mtype_t::*;
     use raw::Stype_t::*;
@@ -65,7 +69,8 @@ fn superlu() {
             xa[5] = 12;
         }
 
-        let mut A: SuperMatrix = uninitialized();
+        let mut A: SuperMatrix = MaybeUninit::zeroed().assume_init();
+
         dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
 
         let nrhs = 1;
@@ -78,7 +83,7 @@ fn superlu() {
             }
         }
 
-        let mut B: SuperMatrix = uninitialized();
+        let mut B: SuperMatrix = MaybeUninit::zeroed().assume_init();
         dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
 
         let perm_r = intMalloc(m);
@@ -87,15 +92,15 @@ fn superlu() {
         let perm_c = intMalloc(n);
         assert!(!perm_c.is_null());
 
-        let mut options: superlu_options_t = uninitialized();
+        let mut options: superlu_options_t = MaybeUninit::zeroed().assume_init();
         set_default_options(&mut options);
         options.ColPerm = NATURAL;
 
-        let mut stat: SuperLUStat_t = uninitialized();
+        let mut stat: SuperLUStat_t = MaybeUninit::zeroed().assume_init();
         StatInit(&mut stat);
 
-        let mut L: SuperMatrix = uninitialized();
-        let mut U: SuperMatrix = uninitialized();
+        let mut L: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut U: SuperMatrix = MaybeUninit::zeroed().assume_init();
 
         let mut info = 0;
         dgssv(
@@ -118,5 +123,104 @@ fn superlu() {
         Destroy_SuperNode_Matrix(&mut L);
         Destroy_CompCol_Matrix(&mut U);
         StatFree(&mut stat);
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn test_singular() {
+    use raw::Dtype_t::*;
+    use raw::Mtype_t::*;
+    use raw::Stype_t::*;
+    use raw::colperm_t::*;
+
+    unsafe {
+        let (m, n, nnz) = (5, 5, 0);
+
+        let a = doubleMalloc(nnz);
+        assert!(!a.is_null());
+        let asub = intMalloc(nnz);
+        assert!(!asub.is_null());
+
+        let xa = intMalloc(n + 1);
+        assert!(!xa.is_null());
+
+        let mut A: SuperMatrix = MaybeUninit::zeroed().assume_init();
+
+        dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+
+        let nrhs = 1;
+        let rhs = doubleMalloc(m * nrhs);
+        assert!(!rhs.is_null());
+        {
+            let rhs = from_raw_parts_mut(rhs, (m * nrhs) as usize);
+            for i in 0..((m * nrhs) as usize) {
+                rhs[i] = 1.0;
+            }
+        }
+
+        let mut B: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+
+        let perm_r = intMalloc(m);
+        assert!(!perm_r.is_null());
+
+        let perm_c = intMalloc(n);
+        assert!(!perm_c.is_null());
+
+        let mut options: superlu_options_t = MaybeUninit::zeroed().assume_init();
+        set_default_options(&mut options);
+        options.ColPerm = NATURAL;
+
+        let mut stat: SuperLUStat_t = MaybeUninit::zeroed().assume_init();
+        StatInit(&mut stat);
+
+        let mut L: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut U: SuperMatrix = MaybeUninit::zeroed().assume_init();
+
+        let mut info = 0;
+        dgssv(
+            &mut options,
+            &mut A,
+            perm_c,
+            perm_r,
+            &mut L,
+            &mut U,
+            &mut B,
+            &mut stat,
+            &mut info,
+        );
+
+        SUPERLU_FREE(rhs as *mut _);
+        SUPERLU_FREE(perm_r as *mut _);
+        SUPERLU_FREE(perm_c as *mut _);
+        Destroy_CompCol_Matrix(&mut A);
+        Destroy_SuperMatrix_Store(&mut B);
+        Destroy_SuperNode_Matrix(&mut L);
+        Destroy_CompCol_Matrix(&mut U);
+        StatFree(&mut stat);
+    }
+}
+
+#[test]
+fn test_read_write_super_matrix_f64 () {
+    let m = 3;
+    let n = 2;
+    let v = unsafe {
+        let rhs = doubleMalloc(m * n);
+        assert!(!rhs.is_null());
+        {
+            let rhs = from_raw_parts_mut(rhs, (m * n) as usize);
+            for i in 0..((m * n) as usize) {
+                rhs[i] = i as f64;
+            }
+        }
+
+        let mut a: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        dCreate_Dense_Matrix(&mut a, m, n, rhs, m, SLU_DN, SLU_D, SLU_GE);
+        a.data_as_vec().unwrap()
+    };
+    for i in 0..v.len() as i32 {
+        assert_eq!(v[i as usize], i.into());
     }
 }

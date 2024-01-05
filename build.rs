@@ -57,19 +57,17 @@ fn main() {
 }
 
 fn copy(source: &Path, destination: &Path, extension: &str) -> io::Result<()> {
-    for entry in try!(fs::read_dir(source)) {
-        let path = try!(entry).path();
-        if fs::metadata(&path).unwrap().is_dir() {
+    for entry in fs::read_dir(source)? {
+        let path = entry?.path();
+        if fs::metadata(&path)?.is_dir() {
             continue;
         }
-        match path.extension() {
-            Some(name) if name == extension => match path.file_name() {
-                Some(name) => {
-                    try!(fs::copy(&path, destination.join(name)));
+        if let Some(name) = path.extension() {
+            if name == extension {
+                if let Some(name) = path.file_name() {
+                    fs::copy(&path, destination.join(name))?;
                 }
-                _ => {}
-            },
-            _ => {}
+            }
         }
     }
     Ok(())

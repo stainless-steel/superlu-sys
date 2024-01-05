@@ -1,6 +1,7 @@
 # superlu-sys [![Package][package-img]][package-url] [![Documentation][documentation-img]][documentation-url] [![Build][build-img]][build-url]
 
 The package provides bindings to [SuperLU].
+If is a fork of superlu-sys by Ivan Ukov.
 
 ## Contribution
 
