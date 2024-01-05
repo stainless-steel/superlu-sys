@@ -5,7 +5,6 @@ use raw::Mtype_t::SLU_GE;
 use raw::Stype_t::SLU_DN;
 use raw::*;
 use raw::{dCreate_Dense_Matrix, doubleMalloc, SuperMatrix};
-use std::mem::MaybeUninit;
 use std::slice::from_raw_parts_mut;
 
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
@@ -69,7 +68,7 @@ fn test_valid() {
             xa[5] = 12;
         }
 
-        let mut A: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut A: SuperMatrix = std::mem::zeroed();
 
         dCreate_CompCol_Matrix(&mut A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
 
@@ -83,7 +82,7 @@ fn test_valid() {
             }
         }
 
-        let mut B: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut B: SuperMatrix = std::mem::zeroed();
         dCreate_Dense_Matrix(&mut B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
 
         let perm_r = intMalloc(m);
@@ -92,15 +91,15 @@ fn test_valid() {
         let perm_c = intMalloc(n);
         assert!(!perm_c.is_null());
 
-        let mut options: superlu_options_t = MaybeUninit::zeroed().assume_init();
+        let mut options: superlu_options_t = std::mem::zeroed();
         set_default_options(&mut options);
         options.ColPerm = NATURAL;
 
-        let mut stat: SuperLUStat_t = MaybeUninit::zeroed().assume_init();
+        let mut stat: SuperLUStat_t = std::mem::zeroed();
         StatInit(&mut stat);
 
-        let mut L: SuperMatrix = MaybeUninit::zeroed().assume_init();
-        let mut U: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut L: SuperMatrix = std::mem::zeroed();
+        let mut U: SuperMatrix = std::mem::zeroed();
 
         let mut info = 0;
         dgssv(
@@ -140,7 +139,7 @@ fn test_read_write_super_matrix_f64() {
             }
         }
 
-        let mut a: SuperMatrix = MaybeUninit::zeroed().assume_init();
+        let mut a: SuperMatrix = std::mem::zeroed();
         dCreate_Dense_Matrix(&mut a, m, n, rhs, m, SLU_DN, SLU_D, SLU_GE);
         a.data_to_vec().unwrap()
     };
