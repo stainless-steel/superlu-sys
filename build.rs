@@ -1,5 +1,5 @@
-use std::{env, fs, io, process};
 use std::path::{Path, PathBuf};
+use std::{env, fs, io, process};
 
 macro_rules! cmd(
     ($name:expr) => (process::Command::new($name));
@@ -37,19 +37,17 @@ fn main() {
 
     let lib = output.join("lib");
     fs::create_dir(&lib);
-    run!(
-        cmd!("make")
-            .current_dir(&source.join("SRC"))
-            .arg("NOOPTS=-O0 -fPIC -w")
-            .arg("CFLAGS=-O3 -DNDEBUG -DPRNTlevel=0 -fPIC -w")
-            .arg("DZAUX=")
-            .arg("SCAUX=")
-            .arg(&format!("SuperLUroot={}", source.display()))
-            .arg(&format!(
-                "SUPERLULIB={}",
-                lib.join("libsuperlu.a").display()
-            ))
-    );
+    run!(cmd!("make")
+        .current_dir(&source.join("SRC"))
+        .arg("NOOPTS=-O0 -fPIC -w")
+        .arg("CFLAGS=-O3 -DNDEBUG -DPRNTlevel=0 -fPIC -w")
+        .arg("DZAUX=")
+        .arg("SCAUX=")
+        .arg(&format!("SuperLUroot={}", source.display()))
+        .arg(&format!(
+            "SUPERLULIB={}",
+            lib.join("libsuperlu.a").display()
+        )));
 
     println!("cargo:root={}", output.display());
     println!("cargo:rustc-link-lib=static=superlu");

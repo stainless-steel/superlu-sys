@@ -1,5 +1,5 @@
-use std::slice;
 use libc::{c_int, c_void};
+use std::slice;
 
 pub type int_t = c_int;
 
@@ -51,15 +51,15 @@ pub struct SuperMatrix {
 }
 
 impl SuperMatrix {
-    pub fn data_as_vec(&self) -> Option<Vec<f64>> {
+    pub fn data_to_vec(&self) -> Option<Vec<f64>> {
         match self.Stype {
             Stype_t::SLU_DN => {}
-            _ => {return None}
+            _ => return None,
         }
 
         match self.Dtype {
             Dtype_t::SLU_D => {}
-            _ => {return None}
+            _ => return None,
         }
 
         unsafe {
@@ -74,8 +74,8 @@ impl SuperMatrix {
                 Dtype_t::SLU_D => {
                     let values = slice::from_raw_parts(dn_format.nzval as *const f64, nnz);
                     Some(values.to_vec())
-                },
-                _ => {None}
+                }
+                _ => None,
             }
         }
     }
