@@ -1,16 +1,19 @@
 [package]
 name = "superlu-sys"
-version = "0.3.3"
+version = "0.3.5"
 license = "Apache-2.0/MIT"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>", "Henrik Stromberg <henrik@askdrq.com>"]
 description = "The package provides bindings to SuperLU."
 documentation = "https://docs.rs/superlu-sys"
-repository = "https://github.com/HenrikJStromberg/superlu-sys"
+repository = "https://github.com/stainless-steel/superlu-sys"
 readme = "README.md"
 categories = ["external-ffi-bindings", "science"]
 keywords = ["linear-algebra"]
 build = "build.rs"
 links = "superlu"
+
+[build-dependencies]
+cmake = "0.1.50"
 
 [dependencies]
 libc = "0.2"
