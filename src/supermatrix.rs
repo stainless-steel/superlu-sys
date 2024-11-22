@@ -96,3 +96,16 @@ pub struct DNformat {
     pub lda: int_t,
     pub nzval: *mut c_void,
 }
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct SCformat {
+    pub nnz: int_t,
+    pub nsuper: int_t,
+    pub nzval: *mut c_void,
+    pub nzval_colptr: *mut int_t,
+    pub rowind: *mut int_t,
+    pub rowind_colptr: *mut int_t,
+    pub col_to_sup: *mut int_t,
+    pub sup_to_col: *mut int_t,
+}

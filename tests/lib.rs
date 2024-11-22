@@ -1,13 +1,16 @@
 extern crate libc;
 extern crate superlu_sys as raw;
 
-use libc::c_char;
+use std::mem;
+use std::ptr::null_mut;
+use libc::{c_char, c_double, c_int, c_void};
 use raw::Dtype_t::SLU_D;
 use raw::Mtype_t::SLU_GE;
-use raw::Stype_t::SLU_DN;
+use raw::Stype_t::{SLU_DN, SLU_NC};
 use raw::*;
 use raw::{dCreate_Dense_Matrix, doubleMalloc, SuperMatrix};
 use std::slice::from_raw_parts_mut;
+use raw::colperm_t::NATURAL;
 
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
 #[allow(non_snake_case)]
@@ -360,5 +363,137 @@ fn test_sp_dgemv() {
         SUPERLU_FREE(xa as *mut _);
         SUPERLU_FREE(x as *mut _);
         SUPERLU_FREE(raw_y as *mut _);
+    }
+}
+
+#[test]
+fn test_dgstrf() {
+    unsafe {
+        // Define the dimensions of the matrix
+        let m: c_int = 5;  // Number of rows
+        let n: c_int = 5;  // Number of columns
+        let nnz: c_int = 12;  // Number of non-zero entries
+
+        // Define the non-zero entries of the matrix A
+        let a: [c_double; 12] = [
+            19.0, 21.0, 21.0, 16.0, 5.0, 18.0,
+            12.0, 12.0, 17.0, 5.0, 18.0, 5.0,
+        ];
+
+        // Row indices of the non-zero entries
+        let asub: [c_int; 12] = [
+            0, 1, 2, 0, 2, 3,
+            1, 2, 4, 2, 3, 4,
+        ];
+
+        // Column pointers
+        let xa: [c_int; 6] = [0, 3, 5, 8, 10, 12];
+
+        // Allocate and initialize the SuperMatrix A
+        let mut A = mem::zeroed();
+        dCreate_CompCol_Matrix(
+            &mut A,
+            m,
+            n,
+            nnz,
+            a.as_ptr() as *mut c_double,
+            asub.as_ptr() as *mut c_int,
+            xa.as_ptr() as *mut c_int,
+            Stype_t::SLU_NC,  // Compressed Column format
+            Dtype_t::SLU_D,   // Double precision
+            Mtype_t::SLU_GE,  // General matrix
+        );
+
+        // Prepare permutation vectors
+        let mut perm_r = vec![0 as c_int; m as usize];
+        let mut perm_c = vec![0 as c_int; n as usize];
+
+        // Initialize options with default values
+        let mut options= mem::zeroed();
+        set_default_options(&mut options);
+        options.ColPerm = colperm_t::COLAMD;  // Use COLAMD for column permutation
+
+        // Initialize SuperLUStat_t
+        let mut stat= mem::zeroed();
+        StatInit(&mut stat);
+
+        // Prepare L and U matrices
+        let mut L= mem::zeroed();
+        let mut U= mem::zeroed();
+
+        // Prepare GlobalLU_t structure
+        let mut Glu = GlobalLU_t {
+            xsup: null_mut(),
+            supno: null_mut(),
+            lsub: null_mut(),
+            xlsub: null_mut(),
+            lusup: null_mut(),
+            xlusup: null_mut(),
+            ucol: null_mut(),
+            usub: null_mut(),
+            xusub: null_mut(),
+            nzlmax: 0,
+            nzumax: 0,
+            nzlumax: 0,
+            num_expansions: 0,
+        };
+
+        // Compute the elimination tree
+        let mut etree = vec![0 as c_int; n as usize];
+
+        // Allocate a SuperMatrix for AC
+        let mut AC= mem::zeroed();
+
+        // Perform the symbolic factorization and compute the permuted matrix AC
+        sp_preorder(
+            &mut options,
+            &mut A,
+            perm_c.as_mut_ptr(),
+            etree.as_mut_ptr(),
+            &mut AC,
+        );
+
+        // Prepare other parameters
+        let relax: c_int = sp_ienv(2);  // Number of columns in a relaxed supernode
+        let panel_size: c_int = sp_ienv(1);  // Panel size
+        let work: *mut c_void = null_mut();  // Workspace (not used here)
+        let lwork: c_int = 0;  // Specifies the size of work array
+        let mut info: c_int = 0;
+
+        // Call dgstrf to perform LU factorization on the permuted matrix AC
+        dgstrf(
+            &mut options,
+            &mut AC,
+            relax,
+            panel_size,
+            etree.as_mut_ptr(),
+            work,
+            lwork,
+            perm_c.as_mut_ptr(),
+            perm_r.as_mut_ptr(),
+            &mut L,
+            &mut U,
+            &mut Glu,
+            &mut stat,
+            &mut info,
+        );
+
+        // Check that factorization was successful
+        assert_eq!(info, 0, "dgstrf failed with info = {}", info);
+
+        // Optionally, you can inspect the contents of L and U
+        // For example, print the number of non-zeros in L and U
+        let Lstore = L.Store as *mut SCformat;
+        let Ustore = U.Store as *mut NCformat;
+
+        println!("Number of non-zeros in L = {}", (*Lstore).nnz);
+        println!("Number of non-zeros in U = {}", (*Ustore).nnz);
+
+        // Clean up and free allocated resources
+        Destroy_SuperMatrix_Store(&mut A);
+        Destroy_SuperNode_Matrix(&mut L);
+        Destroy_CompCol_Matrix(&mut U);
+        Destroy_CompCol_Permuted(&mut AC);  // Clean up AC
+        StatFree(&mut stat);
     }
 }
