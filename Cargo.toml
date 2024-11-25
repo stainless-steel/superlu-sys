@@ -1,6 +1,6 @@
 [package]
 name = "superlu-sys"
-version = "0.3.5"
+version = "0.4.0"
 license = "Apache-2.0/MIT"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>", "Henrik Stromberg <henrik@askdrq.com>"]
 description = "The package provides bindings to SuperLU."
