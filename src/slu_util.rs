@@ -48,6 +48,23 @@ pub struct SuperLUStat_t {
     pub expansions: c_int,
 }
 
+#[repr(C)]
+pub struct GlobalLU_t {
+    pub xsup: *mut c_int,
+    pub supno: *mut c_int,
+    pub lsub: *mut c_int,
+    pub xlsub: *mut c_int,
+    pub lusup: *mut c_double,
+    pub xlusup: *mut c_int,
+    pub ucol: *mut c_double,
+    pub usub: *mut c_int,
+    pub xusub: *mut c_int,
+    pub nzlmax: c_int,
+    pub nzumax: c_int,
+    pub nzlumax: c_int,
+    pub num_expansions: c_int,
+}
+
 extern "C" {
     pub fn Destroy_SuperMatrix_Store(A: *mut SuperMatrix);
     pub fn Destroy_CompCol_Matrix(A: *mut SuperMatrix);
@@ -60,6 +77,7 @@ extern "C" {
     pub fn superlu_free(addr: *mut c_void);
     pub fn StatInit(stat: *mut SuperLUStat_t);
     pub fn StatFree(stat: *mut SuperLUStat_t);
+    pub fn sp_ienv(ispec: c_int) -> c_int;
 }
 
 pub static SUPERLU_FREE: unsafe extern "C" fn(*mut c_void) = superlu_free;

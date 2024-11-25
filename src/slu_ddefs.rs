@@ -1,7 +1,8 @@
-use libc::{c_double, c_int};
+use libc::{c_double, c_int, c_void};
 
 use slu_util::*;
 use supermatrix::*;
+use trans_t;
 
 extern "C" {
     pub fn dgssv(
@@ -11,6 +12,34 @@ extern "C" {
         perm_r: *mut c_int,
         L: *mut SuperMatrix,
         U: *mut SuperMatrix,
+        B: *mut SuperMatrix,
+        stat: *mut SuperLUStat_t,
+        info: *mut c_int,
+    );
+
+    pub fn dgstrf(
+        options: *mut superlu_options_t,
+        A: *mut SuperMatrix,
+        relax: c_int,
+        panel_size: c_int,
+        etree: *mut c_int,
+        work: *mut c_void,
+        lwork: c_int,
+        perm_c: *mut c_int,
+        perm_r: *mut c_int,
+        L: *mut SuperMatrix,
+        U: *mut SuperMatrix,
+        Glu: *mut GlobalLU_t,
+        stat: *mut SuperLUStat_t,
+        info: *mut c_int,
+    );
+
+    pub fn dgstrs(
+        trans: trans_t,
+        L: *mut SuperMatrix,
+        U: *mut SuperMatrix,
+        perm_c: *mut c_int,
+        perm_r: *mut c_int,
         B: *mut SuperMatrix,
         stat: *mut SuperLUStat_t,
         info: *mut c_int,
