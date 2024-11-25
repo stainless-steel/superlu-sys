@@ -465,3 +465,83 @@ fn test_dgstrf_valid() {
         StatFree(&mut stat);
     }
 }
+
+#[allow(non_snake_case)]
+#[test]
+fn test_dgstrf_invalid() {
+    unsafe {
+        let (m, n, mut A) = create_singular_matrix();
+
+        let mut perm_r = (0..m).collect::<Vec<c_int>>();
+        let mut perm_c = (0..n).collect::<Vec<c_int>>();
+
+        let mut options= mem::zeroed();
+        set_default_options(&mut options);
+        options.ColPerm = colperm_t::COLAMD;
+
+        let mut stat= mem::zeroed();
+        StatInit(&mut stat);
+
+        let mut L= mem::zeroed();
+        let mut U= mem::zeroed();
+
+        let mut Glu = GlobalLU_t {
+            xsup: null_mut(),
+            supno: null_mut(),
+            lsub: null_mut(),
+            xlsub: null_mut(),
+            lusup: null_mut(),
+            xlusup: null_mut(),
+            ucol: null_mut(),
+            usub: null_mut(),
+            xusub: null_mut(),
+            nzlmax: 0,
+            nzumax: 0,
+            nzlumax: 0,
+            num_expansions: 0,
+        };
+
+        let mut etree = vec![0 as c_int; n as usize];
+
+        let mut AC= mem::zeroed();
+
+        sp_preorder(
+            &mut options,
+            &mut A,
+            perm_c.as_mut_ptr(),
+            etree.as_mut_ptr(),
+            &mut AC,
+        );
+
+        let relax: c_int = sp_ienv(2);
+        let panel_size: c_int = sp_ienv(1);
+        let work: *mut c_void = null_mut();
+        let lwork: c_int = 0;
+        let mut info: c_int = 0;
+
+        dgstrf(
+            &mut options,
+            &mut AC,
+            relax,
+            panel_size,
+            etree.as_mut_ptr(),
+            work,
+            lwork,
+            perm_c.as_mut_ptr(),
+            perm_r.as_mut_ptr(),
+            &mut L,
+            &mut U,
+            &mut Glu,
+            &mut stat,
+            &mut info,
+        );
+
+        Destroy_SuperMatrix_Store(&mut A);
+        Destroy_SuperNode_Matrix(&mut L);
+        Destroy_CompCol_Matrix(&mut U);
+        Destroy_CompCol_Permuted(&mut AC);
+        StatFree(&mut stat);
+
+        assert_eq!(info, 1);
+    }
+}
