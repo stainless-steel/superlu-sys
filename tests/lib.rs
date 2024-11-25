@@ -545,3 +545,126 @@ fn test_dgstrf_invalid() {
         assert_eq!(info, 1);
     }
 }
+
+#[allow(non_snake_case)]
+#[test]
+fn test_dgstrs_valid() {
+    use raw::colperm_t::*;
+    use raw::Dtype_t::*;
+    use raw::Mtype_t::*;
+    use raw::Stype_t::*;
+    use std::mem;
+    use std::ptr::{null_mut};
+    use std::slice::from_raw_parts_mut;
+
+    unsafe {
+        let (m, n, mut A) = create_regular_matrix();
+
+        let mut perm_r = (0..m).collect::<Vec<c_int>>();
+        let mut perm_c = (0..n).collect::<Vec<c_int>>();
+
+        let mut options: superlu_options_t = mem::zeroed();
+        set_default_options(&mut options);
+        options.ColPerm = colperm_t::COLAMD;
+
+        let mut stat: SuperLUStat_t = mem::zeroed();
+        StatInit(&mut stat);
+
+        let mut L: SuperMatrix = mem::zeroed();
+        let mut U: SuperMatrix = mem::zeroed();
+
+        let mut Glu = GlobalLU_t {
+            xsup: null_mut(),
+            supno: null_mut(),
+            lsub: null_mut(),
+            xlsub: null_mut(),
+            lusup: null_mut(),
+            xlusup: null_mut(),
+            ucol: null_mut(),
+            usub: null_mut(),
+            xusub: null_mut(),
+            nzlmax: 0,
+            nzumax: 0,
+            nzlumax: 0,
+            num_expansions: 0,
+        };
+
+        let mut etree = vec![0 as c_int; n as usize];
+
+        let mut AC: SuperMatrix = mem::zeroed();
+
+        sp_preorder(
+            &mut options,
+            &mut A,
+            perm_c.as_mut_ptr(),
+            etree.as_mut_ptr(),
+            &mut AC,
+        );
+
+        let relax: c_int = sp_ienv(2);
+        let panel_size: c_int = sp_ienv(1);
+        let work: *mut c_void = null_mut();
+        let lwork: c_int = 0;
+        let mut info: c_int = 0;
+
+        dgstrf(
+            &mut options,
+            &mut AC,
+            relax,
+            panel_size,
+            etree.as_mut_ptr(),
+            work,
+            lwork,
+            perm_c.as_mut_ptr(),
+            perm_r.as_mut_ptr(),
+            &mut L,
+            &mut U,
+            &mut Glu,
+            &mut stat,
+            &mut info,
+        );
+
+        assert_eq!(info, 0, "dgstrf failed with info = {}", info);
+
+        let nrhs = 1;
+        let rhs = doubleMalloc(m * nrhs);
+        assert!(!rhs.is_null());
+        {
+            let rhs_slice = from_raw_parts_mut(rhs, (m * nrhs) as usize);
+            for i in 0..((m * nrhs) as usize) {
+                rhs_slice[i] = 1.0;
+            }
+        }
+
+        let mut b: SuperMatrix = mem::zeroed();
+        dCreate_Dense_Matrix(&mut b, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+
+        dgstrs(
+            trans_t::NOTRANS,
+            &mut L,
+            &mut U,
+            perm_c.as_mut_ptr(),
+            perm_r.as_mut_ptr(),
+            &mut b,
+            &mut stat,
+            &mut info,
+        );
+
+        assert_eq!(info, 0, "dgstrs failed with info = {}", info);
+
+        let Bstore = b.Store as *mut DNformat;
+        let x = (*Bstore).nzval as *mut f64;
+        let x_slice = from_raw_parts_mut(x, (m * nrhs) as usize);
+        for i in 0..(m as usize) {
+            println!("x[{}] = {}", i, x_slice[i]);
+        }
+
+        SUPERLU_FREE(rhs as *mut _);
+        Destroy_SuperMatrix_Store(&mut b);
+        Destroy_SuperMatrix_Store(&mut A);
+        Destroy_SuperNode_Matrix(&mut L);
+        Destroy_CompCol_Matrix(&mut U);
+        Destroy_CompCol_Permuted(&mut AC);
+        StatFree(&mut stat);
+    }
+}

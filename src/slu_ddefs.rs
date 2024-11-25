@@ -1,7 +1,8 @@
-use libc::{c_double, c_int, c_char, c_void};
+use libc::{c_double, c_int, c_void};
 
 use slu_util::*;
 use supermatrix::*;
+use trans_t;
 
 extern "C" {
     pub fn dgssv(
@@ -34,11 +35,11 @@ extern "C" {
     );
 
     pub fn dgstrs(
-        trans: c_char,
+        trans: trans_t,
         L: *mut SuperMatrix,
         U: *mut SuperMatrix,
-        perm_r: *mut c_int,
         perm_c: *mut c_int,
+        perm_r: *mut c_int,
         B: *mut SuperMatrix,
         stat: *mut SuperLUStat_t,
         info: *mut c_int,
