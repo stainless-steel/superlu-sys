@@ -1,14 +1,14 @@
 extern crate libc;
 extern crate superlu_sys as raw;
 
-use std::mem;
-use std::ptr::null_mut;
 use libc::{c_char, c_int, c_void};
 use raw::Dtype_t::SLU_D;
 use raw::Mtype_t::SLU_GE;
 use raw::Stype_t::{SLU_DN, SLU_NC};
 use raw::*;
 use raw::{dCreate_Dense_Matrix, doubleMalloc, SuperMatrix};
+use std::mem;
+use std::ptr::null_mut;
 use std::slice::from_raw_parts_mut;
 
 // https://github.com/copies/superlu/blob/master/EXAMPLE/superlu.c
@@ -389,15 +389,15 @@ fn test_dgstrf_valid() {
         let mut perm_r = (0..m).collect::<Vec<c_int>>();
         let mut perm_c = (0..n).collect::<Vec<c_int>>();
 
-        let mut options= mem::zeroed();
+        let mut options = mem::zeroed();
         set_default_options(&mut options);
         options.ColPerm = colperm_t::COLAMD;
 
-        let mut stat= mem::zeroed();
+        let mut stat = mem::zeroed();
         StatInit(&mut stat);
 
-        let mut L= mem::zeroed();
-        let mut U= mem::zeroed();
+        let mut L = mem::zeroed();
+        let mut U = mem::zeroed();
 
         let mut Glu = GlobalLU_t {
             xsup: null_mut(),
@@ -417,7 +417,7 @@ fn test_dgstrf_valid() {
 
         let mut etree = vec![0 as c_int; n as usize];
 
-        let mut AC= mem::zeroed();
+        let mut AC = mem::zeroed();
 
         sp_preorder(
             &mut options,
@@ -475,15 +475,15 @@ fn test_dgstrf_invalid() {
         let mut perm_r = (0..m).collect::<Vec<c_int>>();
         let mut perm_c = (0..n).collect::<Vec<c_int>>();
 
-        let mut options= mem::zeroed();
+        let mut options = mem::zeroed();
         set_default_options(&mut options);
         options.ColPerm = colperm_t::COLAMD;
 
-        let mut stat= mem::zeroed();
+        let mut stat = mem::zeroed();
         StatInit(&mut stat);
 
-        let mut L= mem::zeroed();
-        let mut U= mem::zeroed();
+        let mut L = mem::zeroed();
+        let mut U = mem::zeroed();
 
         let mut Glu = GlobalLU_t {
             xsup: null_mut(),
@@ -503,7 +503,7 @@ fn test_dgstrf_invalid() {
 
         let mut etree = vec![0 as c_int; n as usize];
 
-        let mut AC= mem::zeroed();
+        let mut AC = mem::zeroed();
 
         sp_preorder(
             &mut options,
@@ -549,12 +549,11 @@ fn test_dgstrf_invalid() {
 #[allow(non_snake_case)]
 #[test]
 fn test_dgstrs_valid() {
-    use raw::colperm_t::*;
     use raw::Dtype_t::*;
     use raw::Mtype_t::*;
     use raw::Stype_t::*;
     use std::mem;
-    use std::ptr::{null_mut};
+    use std::ptr::null_mut;
     use std::slice::from_raw_parts_mut;
 
     unsafe {

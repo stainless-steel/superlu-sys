@@ -11,9 +11,9 @@ mod dsp_blas2;
 mod dsp_blas3;
 mod slu_ddefs;
 mod slu_util;
+mod sp_preorder;
 mod superlu_enum_consts;
 mod supermatrix;
-mod sp_preorder;
 
 pub use dsp_blas2::*;
 pub use dsp_blas3::*;

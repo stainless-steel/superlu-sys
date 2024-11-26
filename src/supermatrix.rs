@@ -3,7 +3,7 @@ use std::slice;
 
 pub type int_t = c_int;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(C)]
 pub enum Stype_t {
     SLU_NC,
@@ -16,7 +16,7 @@ pub enum Stype_t {
     SLU_NR_loc,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(C)]
 pub enum Dtype_t {
     SLU_S,
@@ -25,7 +25,7 @@ pub enum Dtype_t {
     SLU_Z,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(C)]
 pub enum Mtype_t {
     SLU_GE,

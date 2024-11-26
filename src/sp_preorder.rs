@@ -1,5 +1,5 @@
 use std::ffi::c_int;
-use ::{superlu_options_t, SuperMatrix};
+use {superlu_options_t, SuperMatrix};
 
 extern "C" {
     pub fn sp_preorder(
