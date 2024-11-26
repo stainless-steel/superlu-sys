@@ -650,12 +650,13 @@ fn test_dgstrs_valid() {
         );
 
         assert_eq!(info, 0, "dgstrs failed with info = {}", info);
+        let expected = vec![-0.03125, 0.065476, 0.013393, 0.0625, 0.0327];
 
         let Bstore = b.Store as *mut DNformat;
         let x = (*Bstore).nzval as *mut f64;
         let x_slice = from_raw_parts_mut(x, (m * nrhs) as usize);
         for i in 0..(m as usize) {
-            println!("x[{}] = {}", i, x_slice[i]);
+            assert!((expected[i] - x_slice[i]).abs() < 1E-4);
         }
 
         SUPERLU_FREE(rhs as *mut _);
