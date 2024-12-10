@@ -1,6 +1,6 @@
 [package]
 name = "superlu-sys"
-version = "0.4.1"
+version = "0.4.2"
 license = "Apache-2.0/MIT"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>", "Henrik Stromberg <henrik@askdrq.com>"]
 description = "The package provides bindings to SuperLU."
@@ -17,4 +17,4 @@ cmake = "0.1.50"
 
 [dependencies]
 libc = "0.2"
-openblas-src = { version = "0.10.8", features = ["cache"] }
+openblas-src = { version = "0.10.10", features = ["cache"] }
